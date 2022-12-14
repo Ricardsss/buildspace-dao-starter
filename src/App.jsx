@@ -1,15 +1,18 @@
 import {
   useAddress,
+  useNetwork,
   ConnectWallet,
   Web3Button,
   useContract,
   useNFTBalance,
 } from "@thirdweb-dev/react";
+import { ChainId } from "@thirdweb-dev/sdk";
 import { useState, useEffect, useMemo } from "react";
 import { AddressZero } from "@ethersproject/constants";
 
 const App = () => {
   const address = useAddress();
+  const network = useNetwork();
   console.log("👋 Address: ", address);
 
   const editionDropAddress = "0x0da115F616F29917239901E373E25976BE3eE26B";
@@ -147,6 +150,18 @@ const App = () => {
       };
     });
   }, [memberAddresses, memberTokenAmounts]);
+
+  if (address && network?.[0].data.chain.id !== ChainId.Goerli) {
+    return (
+      <div className="unsupported-network">
+        <h2>Please connect to Goerli</h2>
+        <p>
+          This dapp only works on the Goerli network, please switch networks in
+          your connected wallet.
+        </p>
+      </div>
+    );
+  }
 
   if (!address) {
     return (
